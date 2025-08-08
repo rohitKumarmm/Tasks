@@ -1,0 +1,89 @@
+class Person {
+    private String name;
+    private float age;
+
+    public Person(String name, float age) {
+        this.name = name;
+        this.age = age;
+    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public float getAge() { return age; }
+    public void setAge(float age) { this.age = age; }
+
+    @Override
+    public String toString() {
+        return "Person[name=" + name + ", age=" + age + "]";
+    }
+}
+
+
+abstract class Account {
+    private static long nextAccNum = 1000001;
+    private long accNum;
+    protected double balance; 
+    private Person accHolder;
+
+    public Account(Person accHolder, double initialBalance) {
+        this.accNum = nextAccNum++;
+        this.accHolder = accHolder;
+        this.balance = initialBalance;
+    }
+
+    public long getAccNum() { return accNum; }
+    public double getBalance() { return balance; }
+    public Person getAccHolder() { return accHolder; }
+    public void setAccHolder(Person person) { this.accHolder = person; }
+
+    public void deposit(double amount) {
+        if (amount > 0) balance += amount;
+    }
+
+    public abstract void withdraw(double amount);
+
+    @Override
+    public String toString() {
+        return "Account[accNum=" + accNum +
+               ", balance=" + balance +
+               ", accHolder=" + accHolder + "]";
+    }
+}
+
+
+class SavingsAccount extends Account {
+    private static final double MIN_BALANCE = 500.0;
+
+    public SavingsAccount(Person accHolder, double initialBalance) {
+        super(accHolder, initialBalance);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        if (amount > 0 && (balance - amount) >= MIN_BALANCE) {
+            balance -= amount;
+        } else {
+            System.out.println("Withdrawal failed: Insufficient funds or minimum balance requirement.");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+     
+        Person smith = new Person("Smith", 30);
+        Person kathy = new Person("Kathy", 25);
+
+        Account smithAccount = new SavingsAccount(smith, 2000);
+        Account kathyAccount = new SavingsAccount(kathy, 3000);
+
+        smithAccount.deposit(2000);
+
+        kathyAccount.withdraw(2000);
+
+        System.out.println("Smith Account: " + smithAccount);
+        System.out.println("Kathy Account: " + kathyAccount);
+
+        System.out.println(smithAccount.toString());
+        System.out.println(kathyAccount.toString());
+    }
+}
